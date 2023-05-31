@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+struct Queue {
+    int items[MAX_SIZE];
+    int front;
+    int rear;
+};
+
+void initializeQueue(struct Queue* queue) {
+    queue->front = -1;
+    queue->rear = -1;
+}
+
+int isFull(struct Queue* queue) {
+    return (queue->rear == MAX_SIZE - 1);
+}
+
+int isEmpty(struct Queue* queue) {
+    return (queue->front == -1 && queue->rear == -1);
+}
+
+void enqueue(struct Queue* queue, int item) {
+    if (isFull(queue)) {
+        printf("Queue is full!\n");
+        return;
+    }
+    if (isEmpty(queue)) {
+        queue->front = 0;
+        queue->rear = 0;
+    }
+    else {
+        queue->rear++;
+    }
+    queue->items[queue->rear] = item;
+}
+
+int dequeue(struct Queue* queue) {
+    if (isEmpty(queue)) {
+        printf("Queue is empty!\n");
+        return -1;
+    }
+    int item = queue->items[queue->front];
+    if (queue->front == queue->rear) {
+        queue->front = -1;
+        queue->rear = -1;
+    }
+    else {
+        queue->front++;
+    }
+    return item;
+}
+
+void BFS(int adjacencyMatrix[][MAX_SIZE], int vertices, int startVertex) {
+    int visited[MAX_SIZE] = {0};
+
+    struct Queue queue;
+    initializeQueue(&queue);
+
+    visited[startVertex] = 1;
+    printf("BFS traversal: ");
+
+    printf("%d ", startVertex);
+
+    enqueue(&queue, startVertex);
+
+    while (!isEmpty(&queue)) {
+        int currentVertex = dequeue(&queue);
+
+        for (int i = 0; i < vertices; i++) {
+            if (adjacencyMatrix[currentVertex][i] == 1 && visited[i] == 0) {
+                visited[i] = 1;
+                printf("%d ", i);
+                enqueue(&queue, i);
+            }
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int vertices;
+    printf("Enter the number of vertices: ");
+    scanf("%d", &vertices);
+
+    int adjacencyMatrix[MAX_SIZE][MAX_SIZE];
+
+    printf("Enter the adjacency matrix:\n");
+    for (int i = 0; i < vertices; i++) {
+        for (int j = 0; j < vertices; j++) {
+            scanf("%d", &adjacencyMatrix[i][j]);
+        }
+    }
+
+    int startVertex;
+    printf("Enter the starting vertex: ");
+    scanf("%d", &startVertex);
+
+    BFS(adjacencyMatrix, vertices, startVertex);
+
+    return 0;
+}
